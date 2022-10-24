@@ -100,7 +100,14 @@ class ElInstant {
       const source = AUDIO_CONTEXT.createBufferSource();
       source.buffer = this.sound;
       source.connect(AUDIO_CONTEXT.destination);
-      source.start();
+      // source.start();
+      if (source.start) {
+				source.start(0);
+			} else if (source.play) {
+				source.play(0);
+			} else if (source.noteOn) {
+				source.noteOn(0);
+			}
     }
   }
 
@@ -302,12 +309,16 @@ const init_ui = () => {
 const main = () => {
   arena.style.width = WIDTH;
   arena.style.height = HEIGHT;
+  audio.checked = localStorage.getItem('audio')
+  extended.checked = localStorage.getItem('extended')
 
   init_audio();
   init_ui();
 
   go.addEventListener("click", spawn);
   reset.addEventListener("click", clearArena);
+  audio.addEventListener("change", (e) => localStorage.setItem('audio', e.checked));
+  extended.addEventListener("change", (e) => localStorage.setItem('extended', e.checked));
   extended.addEventListener("change", clearArena);
 };
 
