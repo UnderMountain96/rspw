@@ -1,0 +1,43 @@
+#root {
+    height: -webkit-fill-available;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.arena {
+    margin: 20px;
+}
+
+.btn{
+    font-size: 2rem;
+    padding: 4px 8px;
+    margin: 8px;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn-go{
+    background-color: green;
+    color: white;
+    border: 2px solid darkgreen;
+}
+
+.btn-reset{
+    background-color: blue;
+    color: white;
+    border: 2px solid darkblue;
+}
+
+.unit {
+    transition: all .5s ease-out;
+}
+
+th, td {
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 4px 8px;
+}
