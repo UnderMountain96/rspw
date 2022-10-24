@@ -1,16 +1,14 @@
 (function() {
-	window.AudioContext = window.AudioContext || window.webkitAudioContext;
-	if (window.AudioContext) {
-		window.audioContext = new window.AudioContext();
-	}
+	window.AudioContext = new (window.AudioContext || window.webkitAudioContext);
+	
 	var fixAudioContext = function (e) {
-		if (window.audioContext) {
+		if (window.AudioContext) {
 			// Create empty buffer
-			var buffer = window.audioContext.createBuffer(1, 1, 22050);
-			var source = window.audioContext.createBufferSource();
+			var buffer = window.AudioContext.createBuffer(1, 1, 22050);
+			var source = window.AudioContext.createBufferSource();
 			source.buffer = buffer;
 			// Connect to output (speakers)
-			source.connect(window.audioContext.destination);
+			source.connect(window.AudioContext.destination);
 			// Play sound
 			if (source.start) {
 				source.start(0);
