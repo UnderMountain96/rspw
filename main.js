@@ -16,7 +16,7 @@ const HEIGHT = 500;
 const TIK = 100;
 const SCORE_TIK = 500;
 
-const AUDIO_CONTEXT = window.audioContext;
+const AUDIO_CONTEXT = new (window.AudioContext || window.webkitAudioContext);;
 
 const SOUND_ASSETS = {};
 
@@ -100,14 +100,14 @@ class ElInstant {
       const source = AUDIO_CONTEXT.createBufferSource();
       source.buffer = this.sound;
       source.connect(AUDIO_CONTEXT.destination);
-      // source.start();
-      if (source.start) {
-				source.start(0);
-			} else if (source.play) {
-				source.play(0);
-			} else if (source.noteOn) {
-				source.noteOn(0);
-			}
+      source.start();
+      // if (source.start) {
+			// 	source.start(0);
+			// } else if (source.play) {
+			// 	source.play(0);
+			// } else if (source.noteOn) {
+			// 	source.noteOn(0);
+			// }
     }
   }
 
