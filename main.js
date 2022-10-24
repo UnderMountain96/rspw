@@ -16,7 +16,7 @@ const HEIGHT = 500;
 const TIK = 100;
 const SCORE_TIK = 500;
 
-const AUDIO_CONTEXT = new AudioContext();
+const AUDIO_CONTEXT = window.audioContext;
 
 const SOUND_ASSETS = {};
 
@@ -174,8 +174,6 @@ class ElInstant {
     this.stop();
 
     this.interval = setInterval(() => {
-      console.log("tik");
-
       let x = this.el.offsetLeft;
       let y = this.el.offsetTop;
 
