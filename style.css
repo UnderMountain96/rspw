@@ -2,12 +2,15 @@
     height: -webkit-fill-available;
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
 }
 
-.arena {
-    margin: 20px;
+.config {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .btn{
