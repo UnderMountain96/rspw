@@ -18,11 +18,6 @@ const AUDIO_CONTEXT = new (window.AudioContext || window.webkitAudioContext)();
 
 const SOUND_ASSETS = {};
 
-const CONFIG = {
-  audio: !!!JSON.parse(localStorage.getItem("audio")),
-  extended: !!!JSON.parse(localStorage.getItem("audio")),
-};
-
 const ELEMENTS = [
   { name: "rock", targets: ["scissors", "lizard"], icon: "🗿" },
   { name: "scissors", targets: ["paper", "lizard"], icon: "✂️" },
@@ -104,7 +99,7 @@ class ElInstant {
   }
 
   playSound() {
-    if (CONFIG.audio) {
+    if (audio.checked) {
       const source = AUDIO_CONTEXT.createBufferSource();
       source.buffer = this.sound;
       source.connect(AUDIO_CONTEXT.destination);
@@ -256,7 +251,7 @@ const clearArena = () => {
 
 const spawn = () => {
   clearArena();
-  let filtredElements = ELEMENTS.filter((e) => CONFIG.extended || !e.extended);
+  let filtredElements = ELEMENTS.filter((e) => extended.checked || !e.extended);
 
   filtredElements.forEach((e) => {
     for (let n = 0; n < COUNT_ELEMENTS; n++) {
@@ -286,10 +281,10 @@ const init_ui = () => {
   scoreTableLable.innerHTML = "";
   scoreTableValue.innerHTML = "";
 
-  let filtredElements = ELEMENTS.filter((e) => CONFIG.extended || !e.extended);
+  let filtredElements = ELEMENTS.filter((e) => extended.checked || !e.extended);
 
   filtredElements.forEach((e) => {
-    if (CONFIG.extended || !e.extended) {
+    if (extended.checked || !e.extended) {
       let templateColLable = document.createElement("th");
       templateColLable.classList.add(`score-icon-${e.name}`);
       templateColLable.classList.add("choose-unit");
@@ -321,27 +316,17 @@ const main = () => {
   arena.style.width = WIDTH;
   arena.style.height = HEIGHT;
 
-  console.log(CONFIG);
-
-  audio.addEventListener("click", () => {
-    if (CONFIG.audio) {
-      document.querySelector(".audio-on").classList.add("visually-hidden");
-      document.querySelector(".audio-off").classList.remove("visually-hidden");
-      localStorage.setItem("audio", false);
-    } else {
-      document.querySelector(".audio-off").classList.add("visually-hidden");
-      document.querySelector(".audio-on").classList.remove("visually-hidden");
-      localStorage.setItem("audio", true);
-    }
+  audio.addEventListener("change", (e) => {
+    localStorage.setItem("audio", e.target.checked)
   });
-  extended.addEventListener("click", () =>
-    localStorage.setItem("extended", !CONFIG.extended)
+  extended.addEventListener("change", (e) =>
+    localStorage.setItem("extended", e.target.checked)
   );
 
   init_audio();
   init_ui();
 
-  extended.addEventListener("click", init_ui);
+  extended.addEventListener("change", init_ui);
 };
 
 main();
