@@ -1,58 +1,46 @@
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
 
     <title>RSP WARS</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="root">
-        <div class="config">
+      <div class="config">
+        <label>
+          <input type="checkbox" class="audio" />
+          audio
+        </label>
+        <label>
+          <input type="checkbox" class="extended" />
+          extended
+        </label>
+      </div>
 
-            <div>
-                <label>
-                    <input type="checkbox" class="audio" checked />
-                    audio
-                </label>
-                <label>
-                    <input type="checkbox" class="extended" />
-                    extended
-                </label>
-            </div>
+      <div class="game">
+        <button class="btn btn-reset hide">RESET</button>
 
-            <div>
-                <button class="btn btn-go">GO</button>
-                <button class="btn btn-reset">RESET</button>
-            </div>
+        <table class="score-table">
+          <h1>Choose your unit</h1>
+          <thead>
+            <tr class="score-table--lable"></tr>
+          </thead>
+          <tbody>
+            <tr class="score-table--value"></tr>
+          </tbody>
+        </table>
+      </div>
 
-            <table class="score-table">
-                <thead>
-                    <tr class="score-table--lable">
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="score-table--value">
-
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-
-        <div class="arena">
-
-        </div>
+      <div class="arena hide"></div>
     </div>
-    
-    <script src="main.js"></script>
-</body>
 
+    <script src="main.js"></script>
+  </body>
 </html>

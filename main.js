@@ -3,6 +3,8 @@ const go = document.querySelector(".btn-go");
 const reset = document.querySelector(".btn-reset");
 const audio = document.querySelector(".audio");
 const extended = document.querySelector(".extended");
+const chooseUnit = document.querySelector(".choose-unit");
+const chooseBlock = document.querySelector(".choose-block");
 
 const scoreTable = document.querySelector(".score-table");
 const scoreTableLable = document.querySelector(".score-table--lable");
@@ -28,12 +30,17 @@ const ELEMENTS = [
   { name: "spock", targets: ["scissors", "rock"], icon: "🖖", extended: true },
 ];
 
+let favorit; 
+
 let scoreData = {
   check(elems) {
     elems.forEach((e) => {
       let s = document.getElementsByClassName(e.name).length;
       document.querySelector(`.score-${e.name}`).innerHTML = s;
       if (s === COUNT_ELEMENTS * elems.length) {
+        favorit === e.name ? 
+        console.log(e.name, "YOU WIN!!!"): 
+        console.log(e.name, "YOU LOSE!!!");
         clearInterval(this.interval);
         stopAllUnit();
       }
@@ -101,13 +108,6 @@ class ElInstant {
       source.buffer = this.sound;
       source.connect(AUDIO_CONTEXT.destination);
       source.start();
-      // if (source.start) {
-			// 	source.start(0);
-			// } else if (source.play) {
-			// 	source.play(0);
-			// } else if (source.noteOn) {
-			// 	source.noteOn(0);
-			// }
     }
   }
 
@@ -251,7 +251,6 @@ const stopAllUnit = () => {
 const clearArena = () => {
   [...arena.children].forEach((el) => el.el.remove());
   scoreData.stopCheck();
-  init_ui();
 };
 
 const spawn = () => {
@@ -291,15 +290,23 @@ const init_ui = () => {
   filtredElements.forEach((e) => {
     if (extended.checked || !e.extended) {
       let templateColLable = document.createElement("th");
+      templateColLable.classList.add(`score-icon-${e.name}`);
+      templateColLable.classList.add("choose-unit");
       templateColLable.title = e.name;
       templateColLable.innerHTML = e.icon;
+
+      templateColLable.addEventListener("click", (event) => {
+        favorit = e.name;
+        arena.classList.remove("hide")
+        event.target.classList.add("favorite")
+        spawn();
+      });
 
       scoreTableLable.appendChild(templateColLable);
 
       let templateColValue = document.createElement("td");
       templateColValue.classList.add(`score-${e.name}`);
       templateColValue.title = e.name;
-      templateColValue.innerHTML = 0;
 
       scoreTableValue.appendChild(templateColValue);
     }
@@ -309,16 +316,15 @@ const init_ui = () => {
 const main = () => {
   arena.style.width = WIDTH;
   arena.style.height = HEIGHT;
-  audio.checked = localStorage.getItem('audio')
-  extended.checked = localStorage.getItem('extended')
+  audio.checked = JSON.parse(localStorage.getItem('audio'))
+  extended.checked = JSON.parse(localStorage.getItem('extended'))
 
   init_audio();
   init_ui();
 
-  go.addEventListener("click", spawn);
   reset.addEventListener("click", clearArena);
-  audio.addEventListener("change", (e) => localStorage.setItem('audio', e.checked));
-  extended.addEventListener("change", (e) => localStorage.setItem('extended', e.checked));
+  audio.addEventListener("change", (e) => localStorage.setItem('audio', e.target.checked));
+  extended.addEventListener("change", (e) => localStorage.setItem('extended', e.target.checked));
   extended.addEventListener("change", clearArena);
 };
 
