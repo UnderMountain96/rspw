@@ -1,10 +1,6 @@
 const arena = document.querySelector(".arena");
-const go = document.querySelector(".btn-go");
-const reset = document.querySelector(".btn-reset");
 const audio = document.querySelector(".audio");
 const extended = document.querySelector(".extended");
-const chooseUnit = document.querySelector(".choose-unit");
-const chooseBlock = document.querySelector(".choose-block");
 
 const scoreTable = document.querySelector(".score-table");
 const scoreTableLable = document.querySelector(".score-table--lable");
@@ -13,14 +9,19 @@ const scoreTableValue = document.querySelector(".score-table--value");
 const COUNT_ELEMENTS = 20;
 const SPEED = 10;
 const ICON_SIZE = 22;
-const WIDTH = 500;
-const HEIGHT = 500;
+const WIDTH = arena.offsetWidth;
+const HEIGHT = arena.offsetHeight;
 const TIK = 100;
 const SCORE_TIK = 500;
 
-const AUDIO_CONTEXT = new (window.AudioContext || window.webkitAudioContext);;
+const AUDIO_CONTEXT = new (window.AudioContext || window.webkitAudioContext)();
 
 const SOUND_ASSETS = {};
+
+const CONFIG = {
+  audio: !!!JSON.parse(localStorage.getItem("audio")),
+  extended: !!!JSON.parse(localStorage.getItem("audio")),
+};
 
 const ELEMENTS = [
   { name: "rock", targets: ["scissors", "lizard"], icon: "🗿" },
@@ -30,7 +31,7 @@ const ELEMENTS = [
   { name: "spock", targets: ["scissors", "rock"], icon: "🖖", extended: true },
 ];
 
-let favorit; 
+let favorit;
 
 let scoreData = {
   check(elems) {
@@ -38,9 +39,9 @@ let scoreData = {
       let s = document.getElementsByClassName(e.name).length;
       document.querySelector(`.score-${e.name}`).innerHTML = s;
       if (s === COUNT_ELEMENTS * elems.length) {
-        favorit === e.name ? 
-        console.log(e.name, "YOU WIN!!!"): 
-        console.log(e.name, "YOU LOSE!!!");
+        favorit === e.name
+          ? console.log(e.name, "YOU WIN!!!")
+          : console.log(e.name, "YOU LOSE!!!");
         clearInterval(this.interval);
         stopAllUnit();
       }
@@ -74,11 +75,11 @@ class ElInstant {
     this.positionElement(
       this.randomInteger(
         arena.offsetLeft,
-        arena.offsetLeft + arena.offsetWidth - ICON_SIZE
+        arena.offsetLeft + arena.offsetWidth - ICON_SIZE * 2
       ),
       this.randomInteger(
         arena.offsetTop,
-        arena.offsetTop + arena.clientHeight - ICON_SIZE
+        arena.offsetTop + arena.clientHeight - ICON_SIZE * 2
       )
     );
     arena.appendChild(el);
@@ -103,7 +104,7 @@ class ElInstant {
   }
 
   playSound() {
-    if (audio.checked) {
+    if (CONFIG.audio) {
       const source = AUDIO_CONTEXT.createBufferSource();
       source.buffer = this.sound;
       source.connect(AUDIO_CONTEXT.destination);
@@ -199,9 +200,9 @@ class ElInstant {
         }
 
         if (targetEl.offsetTop < this.el.offsetTop) {
-          y = this.decY(y, "-");
+          y = this.decY(y);
         } else if (targetEl.offsetTop > this.el.offsetTop) {
-          y = this.incY(y, "+");
+          y = this.incY(y);
         }
       }
 
@@ -255,13 +256,12 @@ const clearArena = () => {
 
 const spawn = () => {
   clearArena();
-
-  let filtredElements = ELEMENTS.filter((e) => extended.checked || !e.extended)
+  let filtredElements = ELEMENTS.filter((e) => CONFIG.extended || !e.extended);
 
   filtredElements.forEach((e) => {
-      for (let n = 0; n < COUNT_ELEMENTS; n++) {
-        new ElInstant(e);
-      }
+    for (let n = 0; n < COUNT_ELEMENTS; n++) {
+      new ElInstant(e);
+    }
   });
 
   scoreData.interval = setInterval(() => {
@@ -272,7 +272,7 @@ const spawn = () => {
 const init_audio = () => {
   ELEMENTS.forEach((e) => {
     window
-      .fetch(`./sound/${e.name}.mp3`)
+      .fetch(`./assets/sounds/${e.name}.mp3`)
       .then((response) => response.arrayBuffer())
       .then((arrayBuffer) => AUDIO_CONTEXT.decodeAudioData(arrayBuffer))
       .then((audioBuffer) => {
@@ -282,23 +282,26 @@ const init_audio = () => {
 };
 
 const init_ui = () => {
+  clearArena();
   scoreTableLable.innerHTML = "";
   scoreTableValue.innerHTML = "";
-  
-  let filtredElements = ELEMENTS.filter((e) => extended.checked || !e.extended)
+
+  let filtredElements = ELEMENTS.filter((e) => CONFIG.extended || !e.extended);
 
   filtredElements.forEach((e) => {
-    if (extended.checked || !e.extended) {
+    if (CONFIG.extended || !e.extended) {
       let templateColLable = document.createElement("th");
       templateColLable.classList.add(`score-icon-${e.name}`);
       templateColLable.classList.add("choose-unit");
       templateColLable.title = e.name;
       templateColLable.innerHTML = e.icon;
 
-      templateColLable.addEventListener("click", (event) => {
+      templateColLable.addEventListener("click", () => {
+        document.querySelector(".favorite")?.classList.remove("favorite");
         favorit = e.name;
-        arena.classList.remove("hide")
-        event.target.classList.add("favorite")
+        document
+          .querySelector(`.score-icon-${e.name}`)
+          .classList.add("favorite");
         spawn();
       });
 
@@ -307,6 +310,7 @@ const init_ui = () => {
       let templateColValue = document.createElement("td");
       templateColValue.classList.add(`score-${e.name}`);
       templateColValue.title = e.name;
+      templateColValue.innerHTML = COUNT_ELEMENTS;
 
       scoreTableValue.appendChild(templateColValue);
     }
@@ -316,16 +320,28 @@ const init_ui = () => {
 const main = () => {
   arena.style.width = WIDTH;
   arena.style.height = HEIGHT;
-  audio.checked = JSON.parse(localStorage.getItem('audio'))
-  extended.checked = JSON.parse(localStorage.getItem('extended'))
+
+  console.log(CONFIG);
+
+  audio.addEventListener("click", () => {
+    if (CONFIG.audio) {
+      document.querySelector(".audio-on").classList.add("visually-hidden");
+      document.querySelector(".audio-off").classList.remove("visually-hidden");
+      localStorage.setItem("audio", false);
+    } else {
+      document.querySelector(".audio-off").classList.add("visually-hidden");
+      document.querySelector(".audio-on").classList.remove("visually-hidden");
+      localStorage.setItem("audio", true);
+    }
+  });
+  extended.addEventListener("click", () =>
+    localStorage.setItem("extended", !CONFIG.extended)
+  );
 
   init_audio();
   init_ui();
 
-  reset.addEventListener("click", clearArena);
-  audio.addEventListener("change", (e) => localStorage.setItem('audio', e.target.checked));
-  extended.addEventListener("change", (e) => localStorage.setItem('extended', e.target.checked));
-  extended.addEventListener("change", clearArena);
+  extended.addEventListener("click", init_ui);
 };
 
 main();
