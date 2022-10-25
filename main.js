@@ -316,8 +316,11 @@ const main = () => {
   arena.style.width = WIDTH;
   arena.style.height = HEIGHT;
 
+  audio.checked = JSON.parse(localStorage.getItem("audio"));
+  extended.checked = JSON.parse(localStorage.getItem("extended"));
+
   audio.addEventListener("change", (e) => {
-    localStorage.setItem("audio", e.target.checked)
+    localStorage.setItem("audio", e.target.checked);
   });
   extended.addEventListener("change", (e) =>
     localStorage.setItem("extended", e.target.checked)
