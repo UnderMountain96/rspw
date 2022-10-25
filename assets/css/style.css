@@ -1,0 +1,76 @@
+@font-face {
+  font-family: "Russo One";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/russo-one-v14-latin-regular.eot");
+  src: local(""),
+    url("../fonts/russo-one-v14-latin-regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/russo-one-v14-latin-regular.woff2") format("woff2"),
+    url("../fonts/russo-one-v14-latin-regular.woff") format("woff"),
+    url("../fonts/russo-one-v14-latin-regular.ttf") format("truetype"),
+    url("../fonts/russo-one-v14-latin-regular.svg#RussoOne") format("svg");
+}
+body {
+  font-family: "Russo One";
+}
+
+#root {
+  height: -webkit-fill-available;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.config {
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.unit {
+  transition: all 0.5s ease-out;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px;
+  text-align: center;
+}
+
+th,
+td {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 4px;
+}
+
+.hide {
+  display: none;
+}
+
+.choose-unit {
+  font-size: 3rem;
+  width: 4rem;
+  height: 4rem;
+  margin: 8px;
+  cursor: pointer;
+}
+
+.favorite {
+  border-radius: 6px;
+  background-color: dodgerblue;
+}
+
+.arena {
+  min-width: 300px;
+  min-height: 300px;
+
+  max-width: 500px;
+  max-height: 500px;
+}
+
+.config > div > i {
+  font-size: 2rem;
+}
