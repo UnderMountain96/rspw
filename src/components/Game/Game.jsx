@@ -1,15 +1,19 @@
 import React from "react";
 
-export const Game = () => {
+export const Game = ({ units = [] }) => {
   return (
-    <div class="game">
-      <table class="score-table">
-        <h1>Choose your unit</h1>
+    <div className="game">
+      <h1>Choose your unit</h1>
+      <table className="score-table">
         <thead>
-          <tr class="score-table--lable"></tr>
+          <tr className="score-table--lable">
+            {units.map((u) => (
+              <th className="choose-unit">{u.icon}</th>
+            ))}
+          </tr>
         </thead>
         <tbody>
-          <tr class="score-table--value"></tr>
+          <tr className="score-table--value"></tr>
         </tbody>
       </table>
     </div>

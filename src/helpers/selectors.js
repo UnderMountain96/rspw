@@ -1,0 +1,1 @@
+export const getUnits = state => state.game.units;
