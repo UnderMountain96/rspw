@@ -1,14 +1,17 @@
-const arena = document.querySelector(".arena");
-const message = document.querySelector(".message");
 const audio = document.querySelector(".audio");
 const extended = document.querySelector(".extended");
+const count = document.querySelector(".count");
+
+const arena = document.querySelector(".arena");
+const message = document.querySelector(".message");
+
 const scoreTableLable = document.querySelector(".score-table--lable");
 const scoreTableValue = document.querySelector(".score-table--value");
 
 audio.checked = JSON.parse(localStorage.getItem("audio"));
 extended.checked = JSON.parse(localStorage.getItem("extended"));
+count.value = JSON.parse(localStorage.getItem("count")) || count[0].value;
 
-const COUNT_ELEMENTS = 20;
 const SPEED = 10;
 const ICON_SIZE = 22;
 const WIDTH = arena.offsetWidth;
@@ -29,7 +32,7 @@ let scoreData = {
     elems.forEach((e) => {
       let s = document.getElementsByClassName(e.name).length;
       document.querySelector(`.score-${e.name}`).innerHTML = s;
-      if (s === COUNT_ELEMENTS * elems.length) {
+      if (s === count.value * elems.length) {
         let message_text;
         favorit === e.name
           ? (message_text = "YOU WIN!!!")
@@ -261,7 +264,7 @@ const spawn = () => {
   let filtredElements = units.filter((e) => extended.checked || !e.extended);
 
   filtredElements.forEach((e) => {
-    for (let n = 0; n < COUNT_ELEMENTS; n++) {
+    for (let n = 0; n < count.value; n++) {
       new ElInstant(e);
     }
   });
@@ -312,7 +315,7 @@ const init_ui = () => {
       let templateColValue = document.createElement("td");
       templateColValue.classList.add(`score-${e.name}`);
       templateColValue.title = e.name;
-      templateColValue.innerHTML = COUNT_ELEMENTS;
+      templateColValue.innerHTML = count.value;
 
       scoreTableValue.appendChild(templateColValue);
     }
@@ -326,11 +329,15 @@ const main = () => {
   extended.addEventListener("change", (e) =>
     localStorage.setItem("extended", e.target.checked)
   );
+  count.addEventListener("change", (e) => {
+    localStorage.setItem("count", e.target.value);
+  });
 
   init_audio();
   init_ui();
 
   extended.addEventListener("change", init_ui);
+  count.addEventListener("change", init_ui);
 };
 
 main();

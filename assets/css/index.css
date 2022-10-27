@@ -25,10 +25,11 @@ body {
 }
 
 #root {
-  height: 100vh;
+  height: -webkit-fill-available;
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding: 20px 0;
 }
 
 .unit {
@@ -49,6 +50,10 @@ td {
   height: 4rem;
   margin: 8px;
   cursor: pointer;
+}
+
+.config {
+  margin: 0 10px;
 }
 
 .favorite {
