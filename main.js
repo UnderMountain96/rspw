@@ -1,3 +1,5 @@
+import { units } from "./units.js";
+
 const audio = document.querySelector(".audio");
 const extended = document.querySelector(".extended");
 const count = document.querySelector(".count");
@@ -21,9 +23,17 @@ const SCORE_TIK = 500;
 
 const AUDIO_CONTEXT = new (window.AudioContext || window.webkitAudioContext)();
 
-const SOUND_ASSETS = {};
-
-import { units } from "./units.js";
+const SOUND_ASSETS = {
+  sounds: [
+    { ext: ".mp3", name: "victory" },
+    { ext: ".mp3", name: "defeat" },
+    { ext: ".mp3", name: "rock" },
+    { ext: ".mp3", name: "scissors" },
+    { ext: ".mp3", name: "paper" },
+    { ext: ".mp3", name: "lizard" },
+    { ext: ".mp3", name: "spock" },
+  ],
+};
 
 let favorit;
 
@@ -34,12 +44,17 @@ let scoreData = {
       document.querySelector(`.score-${e.name}`).innerHTML = s;
       if (s === count.value * elems.length) {
         let message_text;
-        favorit === e.name
-          ? (message_text = "YOU WIN!!!")
-          : (message_text = "YOU LOSE!!!");
+        let sound;
+        if (favorit === e.name) {
+          message_text = "YOU WIN!!!";
+          sound = SOUND_ASSETS["victory"];
+        } else {
+          message_text = "YOU LOSE!!!";
+          sound = SOUND_ASSETS["defeat"];
+        }
 
-        console.log(e.name, message_text);
         this.setMessage(message_text);
+        this.playSound(sound);
         clearInterval(this.interval);
         stopAllUnit();
       }
@@ -54,6 +69,15 @@ let scoreData = {
   },
   clearMessage() {
     message.innerHTML = "";
+  },
+
+  playSound(sound) {
+    if (audio.checked) {
+      const source = AUDIO_CONTEXT.createBufferSource();
+      source.buffer = sound;
+      source.connect(AUDIO_CONTEXT.destination);
+      source.start();
+    }
   },
 };
 
@@ -275,9 +299,8 @@ const spawn = () => {
 };
 
 const init_audio = () => {
-  units.forEach((e) => {
-    window
-      .fetch(`./assets/sounds/${e.name}.mp3`)
+  SOUND_ASSETS.sounds.forEach((e) => {
+    fetch(`./assets/sounds/${e.name}${e.ext}`)
       .then((response) => response.arrayBuffer())
       .then((arrayBuffer) => AUDIO_CONTEXT.decodeAudioData(arrayBuffer))
       .then((audioBuffer) => {
