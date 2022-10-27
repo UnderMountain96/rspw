@@ -1,10 +1,12 @@
 const arena = document.querySelector(".arena");
+const message = document.querySelector(".message");
 const audio = document.querySelector(".audio");
 const extended = document.querySelector(".extended");
-
-const scoreTable = document.querySelector(".score-table");
 const scoreTableLable = document.querySelector(".score-table--lable");
 const scoreTableValue = document.querySelector(".score-table--value");
+
+audio.checked = JSON.parse(localStorage.getItem("audio"));
+extended.checked = JSON.parse(localStorage.getItem("extended"));
 
 const COUNT_ELEMENTS = 20;
 const SPEED = 10;
@@ -18,13 +20,7 @@ const AUDIO_CONTEXT = new (window.AudioContext || window.webkitAudioContext)();
 
 const SOUND_ASSETS = {};
 
-const ELEMENTS = [
-  { name: "rock", targets: ["scissors", "lizard"], icon: "🗿" },
-  { name: "scissors", targets: ["paper", "lizard"], icon: "✂️" },
-  { name: "paper", targets: ["rock", "spock"], icon: "📜" },
-  { name: "lizard", targets: ["spock", "paper"], icon: "🦎", extended: true },
-  { name: "spock", targets: ["scissors", "rock"], icon: "🖖", extended: true },
-];
+import { units } from "./units.js";
 
 let favorit;
 
@@ -34,9 +30,13 @@ let scoreData = {
       let s = document.getElementsByClassName(e.name).length;
       document.querySelector(`.score-${e.name}`).innerHTML = s;
       if (s === COUNT_ELEMENTS * elems.length) {
+        let message_text;
         favorit === e.name
-          ? console.log(e.name, "YOU WIN!!!")
-          : console.log(e.name, "YOU LOSE!!!");
+          ? (message_text = "YOU WIN!!!")
+          : (message_text = "YOU LOSE!!!");
+
+        console.log(e.name, message_text);
+        this.setMessage(message_text);
         clearInterval(this.interval);
         stopAllUnit();
       }
@@ -46,17 +46,24 @@ let scoreData = {
     clearInterval(this.interval);
   },
   interval: null,
+  setMessage(message_text) {
+    message.innerHTML = message_text;
+  },
+  clearMessage() {
+    message.innerHTML = "";
+  },
 };
 
 class ElInstant {
-  constructor({ name, targets, icon }) {
+  constructor({ name, enemies, icon }) {
     this.name = name;
-    this.targets = targets;
+    this.enemies = enemies;
     this.icon = icon;
 
     this.sound = null;
     this.el = null;
     this.interval = null;
+    this.target = null;
 
     this.init();
   }
@@ -70,18 +77,17 @@ class ElInstant {
     this.positionElement(
       this.randomInteger(
         arena.offsetLeft,
-        arena.offsetLeft + arena.offsetWidth - ICON_SIZE * 2
+        arena.offsetLeft + WIDTH - ICON_SIZE * 2
       ),
       this.randomInteger(
         arena.offsetTop,
-        arena.offsetTop + arena.clientHeight - ICON_SIZE * 2
+        arena.offsetTop + HEIGHT - ICON_SIZE * 2
       )
     );
     arena.appendChild(el);
     el.el = this;
-
-    el.style.position = "absolute";
     el.innerHTML = this.icon;
+
     this.moveToTarget();
   }
 
@@ -107,11 +113,11 @@ class ElInstant {
     }
   }
 
-  infected(name, targets, icon) {
+  infected(name, enemies, icon) {
     this.el.classList.remove(this.name);
     this.el.classList.add(name);
     this.name = name;
-    this.targets = targets;
+    this.enemies = enemies;
     this.icon = icon;
     this.el.innerHTML = icon;
 
@@ -138,11 +144,11 @@ class ElInstant {
   }
 
   inArenaX(x) {
-    return x > arena.offsetLeft && x < arena.offsetLeft + arena.offsetWidth;
+    return x > arena.offsetLeft && x < arena.offsetLeft + WIDTH;
   }
 
   inArenaY(y) {
-    return y > arena.offsetTop && y < arena.offsetTop + arena.clientHeight;
+    return y > arena.offsetTop && y < arena.offsetTop + HEIGHT;
   }
 
   decX(x) {
@@ -180,12 +186,12 @@ class ElInstant {
       let x = this.el.offsetLeft;
       let y = this.el.offsetTop;
 
-      let targetEl = this.findElelment(x, y, this.targets);
+      let targetEl = this.findElelment(x, y, this.enemies);
 
       if (targetEl) {
         if (this.touchTarget(targetEl)) {
           this.playSound();
-          targetEl.el.infected(this.name, this.targets, this.icon);
+          targetEl.el.infected(this.name, this.enemies, this.icon);
         }
 
         if (targetEl.offsetLeft < this.el.offsetLeft) {
@@ -218,11 +224,11 @@ class ElInstant {
     return Math.floor(rand);
   }
 
-  findElelment = (x, y, targets) => {
+  findElelment = (x, y, enemies) => {
     let closestEl, minDist, offset;
 
     [
-      ...document.body.querySelectorAll(targets.map((t) => "." + t).join(", ")),
+      ...document.body.querySelectorAll(enemies.map((t) => "." + t).join(", ")),
     ].forEach((el) => {
       offset = { left: el.offsetLeft, top: el.offsetTop };
       offset.left += el.offsetWidth / 2;
@@ -247,11 +253,12 @@ const stopAllUnit = () => {
 const clearArena = () => {
   [...arena.children].forEach((el) => el.el.remove());
   scoreData.stopCheck();
+  scoreData.clearMessage();
 };
 
 const spawn = () => {
   clearArena();
-  let filtredElements = ELEMENTS.filter((e) => extended.checked || !e.extended);
+  let filtredElements = units.filter((e) => extended.checked || !e.extended);
 
   filtredElements.forEach((e) => {
     for (let n = 0; n < COUNT_ELEMENTS; n++) {
@@ -265,7 +272,7 @@ const spawn = () => {
 };
 
 const init_audio = () => {
-  ELEMENTS.forEach((e) => {
+  units.forEach((e) => {
     window
       .fetch(`./assets/sounds/${e.name}.mp3`)
       .then((response) => response.arrayBuffer())
@@ -281,7 +288,7 @@ const init_ui = () => {
   scoreTableLable.innerHTML = "";
   scoreTableValue.innerHTML = "";
 
-  let filtredElements = ELEMENTS.filter((e) => extended.checked || !e.extended);
+  let filtredElements = units.filter((e) => extended.checked || !e.extended);
 
   filtredElements.forEach((e) => {
     if (extended.checked || !e.extended) {
@@ -313,12 +320,6 @@ const init_ui = () => {
 };
 
 const main = () => {
-  arena.style.width = WIDTH;
-  arena.style.height = HEIGHT;
-
-  audio.checked = JSON.parse(localStorage.getItem("audio"));
-  extended.checked = JSON.parse(localStorage.getItem("extended"));
-
   audio.addEventListener("change", (e) => {
     localStorage.setItem("audio", e.target.checked);
   });

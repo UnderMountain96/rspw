@@ -11,32 +11,29 @@
     url("../fonts/russo-one-v14-latin-regular.ttf") format("truetype"),
     url("../fonts/russo-one-v14-latin-regular.svg#RussoOne") format("svg");
 }
+
+main {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center
+}
+
 body {
   font-family: "Russo One";
 }
 
 #root {
-  height: -webkit-fill-available;
+  height: 100vh;
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: space-between;
-}
-
-.config {
-  margin-bottom: 20px;
-  display: flex;
 }
 
 .unit {
   transition: all 0.5s ease-out;
-}
-
-.game {
-  display: flex;
-  flex-direction: column;
-  padding: 8px 16px;
-  text-align: center;
+  position: absolute;
 }
 
 th,
@@ -44,10 +41,6 @@ td {
   text-align: center;
   font-size: 1.5rem;
   padding: 4px;
-}
-
-.hide {
-  display: none;
 }
 
 .choose-unit {
@@ -63,14 +56,50 @@ td {
   background-color: dodgerblue;
 }
 
+.score-table {
+  margin: auto;
+}
+
+.message {
+  font-size: 2rem;
+}
+
 .arena {
   min-width: 300px;
   min-height: 300px;
-
-  max-width: 500px;
-  max-height: 500px;
 }
 
-.config > div > i {
-  font-size: 2rem;
+@media (min-width: 576px) {
+  .arena {
+    min-width: 300px;
+    min-height: 300px;
+  }
+}
+
+@media (min-width: 768px) {
+  .arena {
+    min-width: 400px;
+    min-height: 400px;
+  }
+}
+
+@media (min-width: 992px) {
+  .arena {
+    min-width: 500px;
+    min-height: 500px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .arena {
+    min-width: 600px;
+    min-height: 600px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .arena {
+    min-width: 600px;
+    min-height: 600px;
+  }
 }
