@@ -37,6 +37,17 @@ const SOUND_ASSETS = {
 
 let favorit;
 
+window.requestAnimFrame = (function () {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function (callback) {
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
+})();
+
 let scoreData = {
   check(elems) {
     elems.forEach((e) => {
@@ -91,6 +102,7 @@ class ElInstant {
     this.el = null;
     this.interval = null;
     this.target = null;
+    this.move = false;
 
     this.init();
   }
@@ -154,7 +166,11 @@ class ElInstant {
   }
 
   stop() {
-    clearInterval(this.interval);
+    this.move = false;
+  }
+
+  start() {
+    this.move = true;
   }
 
   touchTarget(targetEl) {
@@ -207,9 +223,9 @@ class ElInstant {
   }
 
   moveToTarget() {
-    this.stop();
+    this.start();
 
-    this.interval = setInterval(() => {
+    this.interval = requestAnimFrame(() => {
       let x = this.el.offsetLeft;
       let y = this.el.offsetTop;
 
@@ -232,13 +248,17 @@ class ElInstant {
         } else if (targetEl.offsetTop > this.el.offsetTop) {
           y = this.incY(y);
         }
+        this.moveToTarget();
+      } else {
+        this.stop();
       }
 
       this.positionElement(
         x + this.randomInteger(-SPEED, SPEED),
         y + this.randomInteger(-SPEED, SPEED)
       );
-    }, TIK);
+    });
+    this.stop();
   }
 
   positionElement(x, y) {
