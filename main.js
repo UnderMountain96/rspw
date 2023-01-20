@@ -224,8 +224,6 @@ class ElInstant {
 
   moveToTarget() {
     this.start();
-
-    this.interval = requestAnimFrame(() => {
       let x = this.el.offsetLeft;
       let y = this.el.offsetTop;
 
@@ -248,16 +246,16 @@ class ElInstant {
         } else if (targetEl.offsetTop > this.el.offsetTop) {
           y = this.incY(y);
         }
-        this.moveToTarget();
-      } else {
-        this.stop();
-      }
+      } 
 
+    this.interval = requestAnimFrame(() => {
       this.positionElement(
         x + this.randomInteger(-SPEED, SPEED),
         y + this.randomInteger(-SPEED, SPEED)
       );
+        this.moveToTarget();
     });
+
     this.stop();
   }
 
